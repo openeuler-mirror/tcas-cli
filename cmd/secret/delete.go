@@ -51,7 +51,7 @@ var secretDeleteCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(secretDeleteCmd)
 	//set parameter for secret delete
-	secretDeleteCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	secretDeleteCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	secretDeleteCmd.Flags().StringP("id", "i", "", "the id of the secret")
 	secretDeleteCmd.MarkFlagRequired("id")
 }

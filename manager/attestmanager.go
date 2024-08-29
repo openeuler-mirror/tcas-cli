@@ -49,6 +49,8 @@ func New(apiEndpoint, caPath string) (*Manager, error) {
 			return nil, fmt.Errorf("add ca to pool failed")
 		}
 		tc.RootCAs = CaCertPool
+	} else {
+		tc.InsecureSkipVerify = true
 	}
 
 	c := tees.GetCollectors()

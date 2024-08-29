@@ -74,7 +74,7 @@ var policySetCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(policySetCmd)
 	//set parameter for policy set
-	policySetCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	policySetCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	policySetCmd.Flags().StringP("name", "n", "", "must, policy name")
 	policySetCmd.MarkFlagRequired("name")
 

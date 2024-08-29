@@ -65,7 +65,7 @@ var secretSetCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(secretSetCmd)
 	//set parameter for secret set
-	secretSetCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	secretSetCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	secretSetCmd.Flags().StringP("name", "n", "", "must, the unique name of the secret")
 	secretSetCmd.Flags().StringP("file", "f", "", "must, the path of secret file, only support json format")
 	secretSetCmd.MarkFlagRequired("name")

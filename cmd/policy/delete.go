@@ -52,7 +52,7 @@ var policyDeleteCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(policyDeleteCmd)
 	//set parameter for policy delete
-	policyDeleteCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	policyDeleteCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	policyDeleteCmd.Flags().StringP("id", "i", "", "must the id of policy")
 	policyDeleteCmd.MarkFlagRequired("id")
 }

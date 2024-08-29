@@ -98,7 +98,7 @@ var verfifyCertCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(verfifyCertCmd)
 	//set parameter for verify cert
-	verfifyCertCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	verfifyCertCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	verfifyCertCmd.Flags().StringP("file", "f", "", "must, the path of the cert to be verified")
 	verfifyCertCmd.Flags().StringP("ca", "c", "", "optional, the path of the CA certificate file.If not, the CA certificate will be automatically obtained")
 	verfifyCertCmd.MarkFlagRequired("file")

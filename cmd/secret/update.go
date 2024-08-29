@@ -61,7 +61,7 @@ var secretUpdateCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(secretUpdateCmd)
 	//set parameter for secret update
-	secretUpdateCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	secretUpdateCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	secretUpdateCmd.Flags().StringP("file", "f", "", "must, the path of new secret file, only support json format")
 	secretUpdateCmd.Flags().StringP("id", "i", "", "must, the id of the old secret")
 	secretUpdateCmd.MarkFlagRequired("id")

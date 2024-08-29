@@ -71,6 +71,6 @@ var Cmd = &cobra.Command{
 
 func init() {
 	//set parameter for policy delete
-	Cmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	Cmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	Cmd.Flags().StringP("output", "o", "./tcas-certs", "optional, the save path of the ca cert")
 }

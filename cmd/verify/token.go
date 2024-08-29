@@ -105,7 +105,7 @@ var verifyTokenCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(verifyTokenCmd)
 	//set parameter for secret set
-	verifyTokenCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	verifyTokenCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	verifyTokenCmd.Flags().StringP("token", "t", "", "must, tcas's token")
 	verifyTokenCmd.Flags().StringP("file", "f", "", "optionally, the path of the CA certificate. If not, it will be verified online")
 	verifyTokenCmd.MarkFlagRequired("token")

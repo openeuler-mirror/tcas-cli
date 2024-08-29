@@ -186,7 +186,7 @@ func init() {
 	Cmd.AddCommand(certCmd)
 	//set parameter for getting cert
 	var ips []net.IP
-	certCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	certCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	certCmd.Flags().StringP("tee", "t", "", "must, tee type")
 	certCmd.Flags().StringP("devices", "v", "", "optional, the trust devices")
 	certCmd.Flags().StringP("policies", "p", "", "optional, the ids of the policy needed matching")

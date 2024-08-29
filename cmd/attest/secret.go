@@ -60,7 +60,7 @@ var secretCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(secretCmd)
 	//set parameter for getting secret
-	secretCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	secretCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	secretCmd.Flags().StringP("tee", "t", "", "must, tee type")
 	secretCmd.Flags().StringP("devices", "v", "", "optional, the trust devices")
 	secretCmd.Flags().StringP("policies", "p", "", "optional, the ids of the policy needed matching")

@@ -54,5 +54,5 @@ var secretListCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(secretListCmd)
 	//set parameter for secret list
-	secretListCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	secretListCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 }

@@ -36,7 +36,7 @@ var tokenCmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(tokenCmd)
 	//set parameter for getting token
-	tokenCmd.Flags().StringP("url", "u", "https://api.trustcluster.cn", "optional, tcas's api url")
+	tokenCmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	tokenCmd.Flags().StringP("tee", "t", "", "must, tee type")
 	tokenCmd.MarkFlagRequired("tee")
 	tokenCmd.Flags().StringP("devices", "v", "", "optional, the trust devices")

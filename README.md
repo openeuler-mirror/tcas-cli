@@ -5,7 +5,7 @@
 ```shell
 ./tcasctl policy set -u <url> -n <name> -f <rego file path> -t <attestation-type>
 ```
-+ `-u`: optional, tcas's api url, default is https://api.trustcluster.cn
++ `-u`: optional, tcas's api url, default is https://api.trustcluster.cc
 + `-n`: must, policy name 
 + `-f`: must, the path of policy file in rego format
 + `-t`: optional, the attestation-type of policy, support trustnode or trustcluster, default is trustnode
@@ -19,7 +19,7 @@ set policy successful, policy id: cfaaab6d-7a25-436e-a8d9-6357a1e4cb33
 ```shell
 ./tcasctl policy list -u <url> -t <attestation-type>
 ```
-+ `-u`: optional, tcas's api url, default is https://api.trustcluster.cn
++ `-u`: optional, tcas's api url, default is https://api.trustcluster.cc
 + `-t`: optional, the attestation-type of policy, support trustnode or trustcluster, default is trustnode
 successful response: 
 
