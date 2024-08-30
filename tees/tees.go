@@ -1,10 +1,10 @@
 package tees
 
 import (
-	"tcas-cli/collectors"
-	"tcas-cli/tees/csv"
-	nvidia "tcas-cli/tees/nvidiamock"
-	"tcas-cli/tees/virtcca"
+	"gitee.com/nanhu-lab/tcas-cli/collectors"
+	"gitee.com/nanhu-lab/tcas-cli/tees/csv"
+	nvidia "gitee.com/nanhu-lab/tcas-cli/tees/nvidiamock"
+	"gitee.com/nanhu-lab/tcas-cli/tees/virtcca"
 )
 
 func GetCollectors() map[string]collectors.EvidenceCollector {

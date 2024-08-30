@@ -3,7 +3,7 @@ package csv
 import (
 	"encoding/base64"
 	"fmt"
-	"tcas-cli/collectors"
+	"gitee.com/nanhu-lab/tcas-cli/collectors"
 )
 
 type Collector struct {
