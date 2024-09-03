@@ -50,9 +50,9 @@ const TSI_DEV = "/dev/tsi"
 const TSI_MAGIC = 'T'
 
 // Ioctl commands
-var TMM_GET_TSI_VERSION = ioctl.IOWR(TSI_MAGIC, 0, 8)
+var TMM_GET_TSI_VERSION = ioctl.IOR(TSI_MAGIC, 0, 8)
 var TMM_GET_ATTESTATION_TOKEN = ioctl.IOWR(TSI_MAGIC, 1, 8264)
-var TMM_GET_DEV_CERT = ioctl.IOWR(TSI_MAGIC, 2, 4104)
+var TMM_GET_DEV_CERT = ioctl.IOR(TSI_MAGIC, 2, 4104)
 
 func GetVersion() (*CVMTSIVersion, error) {
 	fd, err := os.OpenFile(TSI_DEV, os.O_RDWR|os.O_EXCL, 0)
@@ -88,7 +88,7 @@ func GetAttestationToken(challenge []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to get attestation token: %v", errno)
 	}
 
-	return cmd.Token[:], nil
+	return cmd.Token[:cmd.TokenSize], nil
 }
 
 func GetDevCert() ([]byte, error) {
@@ -104,5 +104,5 @@ func GetDevCert() ([]byte, error) {
 		return nil, fmt.Errorf("failed to get dev cert: %v", errno)
 	}
 
-	return cert.Value[:], nil
+	return cert.Value[:cert.Size], nil
 }
