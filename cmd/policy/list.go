@@ -11,8 +11,9 @@ package policy
 import (
 	"encoding/json"
 	"fmt"
-	consts "tcas-cli/constants"
-	"tcas-cli/manager"
+	consts "gitee.com/nanhu-lab/tcas-cli/constants"
+	"gitee.com/nanhu-lab/tcas-cli/manager"
+	"gitee.com/nanhu-lab/tcas-cli/tees"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -29,7 +30,7 @@ var policyListCmd = &cobra.Command{
 		url, _ := cmd.Flags().GetString("url")
 		logrus.Debugf("policy url: " + consts.ColorYellow + url + consts.OutReset)
 
-		m, err := manager.New(url, "")
+		m, err := manager.New(url, "", tees.GetCollectors())
 		if err != nil {
 			logrus.Errorf("create attest manager failed, error: %s", err)
 			return

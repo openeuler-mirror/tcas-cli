@@ -11,10 +11,11 @@ package secret
 import (
 	"encoding/base64"
 	"fmt"
-	consts "tcas-cli/constants"
-	"tcas-cli/manager"
-	"tcas-cli/utils/file"
-	"tcas-cli/utils/tools"
+	consts "gitee.com/nanhu-lab/tcas-cli/constants"
+	"gitee.com/nanhu-lab/tcas-cli/manager"
+	"gitee.com/nanhu-lab/tcas-cli/tees"
+	"gitee.com/nanhu-lab/tcas-cli/utils/file"
+	"gitee.com/nanhu-lab/tcas-cli/utils/tools"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -44,7 +45,7 @@ var secretSetCmd = &cobra.Command{
 			return
 		}
 		encodeJsonData := base64.StdEncoding.EncodeToString(jsonData)
-		m, err := manager.New(url, "")
+		m, err := manager.New(url, "", tees.GetCollectors())
 		if err != nil {
 			logrus.Errorf("create attest manager failed, error: %s", err)
 			return

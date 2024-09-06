@@ -10,12 +10,12 @@ package cmd
 
 import (
 	"fmt"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/attest"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/ca"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/policy"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/secret"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/verify"
 	"os"
-	"tcas-cli/cmd/attest"
-	"tcas-cli/cmd/ca"
-	"tcas-cli/cmd/policy"
-	"tcas-cli/cmd/secret"
-	"tcas-cli/cmd/verify"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

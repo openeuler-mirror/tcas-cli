@@ -10,11 +10,12 @@ package ca
 
 import (
 	"fmt"
+	consts "gitee.com/nanhu-lab/tcas-cli/constants"
+	"gitee.com/nanhu-lab/tcas-cli/manager"
+	"gitee.com/nanhu-lab/tcas-cli/tees"
+	"gitee.com/nanhu-lab/tcas-cli/utils/file"
 	"os"
 	"path/filepath"
-	consts "tcas-cli/constants"
-	"tcas-cli/manager"
-	"tcas-cli/utils/file"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -38,7 +39,7 @@ var Cmd = &cobra.Command{
 			return
 		}
 		//getRootCert
-		m, err := manager.New(url, "")
+		m, err := manager.New(url, "", tees.GetCollectors())
 		if err != nil {
 			logrus.Errorf("create attest manager failed, error: %s", err)
 			return

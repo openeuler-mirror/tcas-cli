@@ -3,8 +3,8 @@ package nvidia
 import (
 	"encoding/json"
 	"fmt"
+	"gitee.com/nanhu-lab/tcas-cli/collectors"
 	"os"
-	"tcas-cli/collectors"
 )
 
 type Collector struct {

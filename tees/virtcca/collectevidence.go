@@ -3,8 +3,8 @@ package virtcca
 import (
 	"encoding/base64"
 	"fmt"
+	"gitee.com/nanhu-lab/tcas-cli/collectors"
 	"github.com/sirupsen/logrus"
-	"tcas-cli/collectors"
 )
 
 type Collector struct {

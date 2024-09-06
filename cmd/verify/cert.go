@@ -11,9 +11,10 @@ package verify
 import (
 	"crypto/x509"
 	"fmt"
-	consts "tcas-cli/constants"
-	"tcas-cli/manager"
-	"tcas-cli/utils/file"
+	consts "gitee.com/nanhu-lab/tcas-cli/constants"
+	"gitee.com/nanhu-lab/tcas-cli/manager"
+	"gitee.com/nanhu-lab/tcas-cli/tees"
+	"gitee.com/nanhu-lab/tcas-cli/utils/file"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -42,7 +43,7 @@ var verfifyCertCmd = &cobra.Command{
 			logrus.Debugf("verify cert ca online")
 			url, _ := cmd.Flags().GetString("url")
 			logrus.Debugf("verify cert url: " + consts.ColorYellow + url + consts.OutReset)
-			m, err := manager.New(url, "")
+			m, err := manager.New(url, "", tees.GetCollectors())
 			if err != nil {
 				logrus.Errorf("create attest manager failed, error: %s", err)
 				return

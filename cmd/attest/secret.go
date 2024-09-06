@@ -3,12 +3,13 @@ package attest
 import (
 	"encoding/json"
 	"fmt"
+	consts "gitee.com/nanhu-lab/tcas-cli/constants"
+	"gitee.com/nanhu-lab/tcas-cli/manager"
+	"gitee.com/nanhu-lab/tcas-cli/tees"
+	"gitee.com/nanhu-lab/tcas-cli/utils/file"
+	"gitee.com/nanhu-lab/tcas-cli/utils/tools"
 	"os"
 	"path/filepath"
-	consts "tcas-cli/constants"
-	"tcas-cli/manager"
-	"tcas-cli/utils/file"
-	"tcas-cli/utils/tools"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -25,7 +26,7 @@ var secretCmd = &cobra.Command{
 		userdata, _ := cmd.Flags().GetString("userdata")
 		policies, _ := cmd.Flags().GetString("policies")
 		secretID, _ := cmd.Flags().GetString("secretId")
-		m, err := manager.New(url, "")
+		m, err := manager.New(url, "", tees.GetCollectors())
 		if err != nil {
 			return
 		}
