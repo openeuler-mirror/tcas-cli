@@ -3,6 +3,7 @@ package attest
 import (
 	"encoding/json"
 	"fmt"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/initconfig"
 	consts "gitee.com/nanhu-lab/tcas-cli/constants"
 	"gitee.com/nanhu-lab/tcas-cli/manager"
 	"gitee.com/nanhu-lab/tcas-cli/tees"
@@ -26,7 +27,12 @@ var secretCmd = &cobra.Command{
 		userdata, _ := cmd.Flags().GetString("userdata")
 		policies, _ := cmd.Flags().GetString("policies")
 		secretID, _ := cmd.Flags().GetString("secretId")
-		m, err := manager.New(url, "", tees.GetCollectors())
+		tcasConfig, err := initconfig.ReadTCASInfoFromConfig(url)
+		if err != nil {
+			logrus.Errorf("get tcasConfig failed, please run <tcascli init> first")
+			return
+		}
+		m, err := manager.New(tcasConfig, tees.GetCollectors())
 		if err != nil {
 			return
 		}

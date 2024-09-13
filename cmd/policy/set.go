@@ -10,6 +10,7 @@ package policy
 
 import (
 	"fmt"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/initconfig"
 	consts "gitee.com/nanhu-lab/tcas-cli/constants"
 	"gitee.com/nanhu-lab/tcas-cli/manager"
 	"gitee.com/nanhu-lab/tcas-cli/tees"
@@ -54,7 +55,16 @@ var policySetCmd = &cobra.Command{
 		attestationType, _ := cmd.Flags().GetString("type")
 		logrus.Debugf("policy set type:" + consts.ColorYellow + attestationType + consts.OutReset)
 
-		m, err := manager.New(url, "", tees.GetCollectors())
+		tcasConfig, err := initconfig.ReadTCASInfoFromConfig(url)
+		if err != nil {
+			logrus.Errorf("get tcasConfig failed, please run <tcascli init> first")
+			return
+		}
+		m, err := manager.New(tcasConfig, tees.GetCollectors())
+		if err != nil {
+			logrus.Errorf("create attest manager failed, error: %s", err)
+			return
+		}
 		if err != nil {
 			logrus.Errorf("create attest manager failed, error: %s", err)
 			return

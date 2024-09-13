@@ -28,46 +28,79 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Manager struct {
-	APIEndpoint string
-	TlsConfig   *tls.Config
-	Collectors  map[string]collectors.EvidenceCollector
+const (
+	AuthToken  = "token"
+	AuthAPIKey = "apikey"
+	AuthNone   = "none"
+)
+
+type TCASInfo struct {
+	APIEndpoint string `json:"APIEndpoint"`
+	Role        string `json:"Role"`
+	Token       string `json:"Token"`
+	APIKey      string `json:"API-KEY"`
+	CaPath      string `json:"CaPath"`
+	SkipVerify  bool   `json:"SkipVerify"`
 }
 
-func New(apiEndpoint, caPath string, c map[string]collectors.EvidenceCollector) (*Manager, error) {
+type Manager struct {
+	Collectors map[string]collectors.EvidenceCollector
+	TCASInfo   *TCASInfo
+	TlsConfig  *tls.Config
+}
+
+func New(tcasInfo *TCASInfo, c map[string]collectors.EvidenceCollector) (*Manager, error) {
 	tc := new(tls.Config)
-	if caPath != "" {
-		certBytes, err := os.ReadFile(caPath)
+	tc.InsecureSkipVerify = tcasInfo.SkipVerify
+
+	var caPool *x509.CertPool
+	if tcasInfo.CaPath != "" {
+		certBytes, err := os.ReadFile(tcasInfo.CaPath)
 		if err != nil {
 			return nil, err
 		}
-
-		CaCertPool := x509.NewCertPool()
-		ok := CaCertPool.AppendCertsFromPEM(certBytes)
+		caPool = x509.NewCertPool()
+		ok := caPool.AppendCertsFromPEM(certBytes)
 		if !ok {
 			return nil, fmt.Errorf("add ca to pool failed")
 		}
-		tc.RootCAs = CaCertPool
 	} else {
-		tc.InsecureSkipVerify = true
+		var err error
+		caPool, err = x509.SystemCertPool()
+		if err != nil {
+			return nil, fmt.Errorf("failed to load system root CA certificates, error: %s", err)
+		}
 	}
+	tc.RootCAs = caPool
 
 	return &Manager{
-		APIEndpoint: apiEndpoint,
-		TlsConfig:   tc,
-		Collectors:  c,
+		TlsConfig:  tc,
+		Collectors: c,
+		TCASInfo:   tcasInfo,
 	}, nil
 }
 
-func (m *Manager) newClient(method string, url string) *httplib.BeegoHTTPRequest {
+func (m *Manager) newClient(method string, url string, authType string) (*httplib.BeegoHTTPRequest, error) {
 	var client *httplib.BeegoHTTPRequest
 	me := strings.ToUpper(method)
-	client = httplib.NewBeegoRequest(m.APIEndpoint+url, me)
+	client = httplib.NewBeegoRequest(m.TCASInfo.APIEndpoint+url, me)
+	switch authType {
+	case AuthToken:
+		if m.TCASInfo.Token == "" {
+			return nil, fmt.Errorf("token is none")
+		}
+		client.Header("Authorization", m.TCASInfo.Token)
+	case AuthAPIKey:
+		if m.TCASInfo.APIKey == "" {
+			return nil, fmt.Errorf("apikey is none")
+		}
+		client.Header("API-KEY", m.TCASInfo.APIKey)
+	}
 
 	if m.TlsConfig != nil {
 		client.SetTLSClientConfig(m.TlsConfig)
 	}
-	return client
+	return client, nil
 }
 
 func (m *Manager) SetPolicy(name, policy, attestationType string) (*PolicySetResponse, error) {
@@ -75,9 +108,9 @@ func (m *Manager) SetPolicy(name, policy, attestationType string) (*PolicySetRes
 	if name == "" || policy == "" {
 		return nil, fmt.Errorf("name or policy is null")
 	}
-	client := m.newClient("post", PolicyUrl)
-	if client == nil {
-		return nil, fmt.Errorf("client is nil")
+	client, err := m.newClient("post", PolicyUrl, AuthToken)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
 	}
 	req := SetPolicyReq{
 		Name:            name,
@@ -85,7 +118,7 @@ func (m *Manager) SetPolicy(name, policy, attestationType string) (*PolicySetRes
 		AttestationType: attestationType,
 	}
 
-	client, err := client.JSONBody(req)
+	client, err = client.JSONBody(req)
 	if err != nil {
 		return nil, err
 	}
@@ -103,10 +136,13 @@ func (m *Manager) ListPolicy(attestationType string) (*PolicyListResponse, error
 		attestationType = "trust_node"
 		fmt.Println("attestationType is null, use default value: `trust_node`")
 	}
-	client := m.newClient("get", PolicyUrl)
+	client, err := m.newClient("get", PolicyUrl, AuthToken)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
 	client.Param("attestation", attestationType)
 	res := new(PolicyListResponse)
-	err := client.ToJSON(res)
+	err = client.ToJSON(res)
 	if err != nil {
 		return nil, fmt.Errorf("request policy list failed, error: %s ", err)
 	}
@@ -117,13 +153,16 @@ func (m *Manager) DeletePolicy(policyID string) (*PolicyDeleteResponse, error) {
 		return nil, fmt.Errorf("policyID is null")
 	}
 	deleteURL := PolicyUrl + "/" + policyID
-	client := m.newClient("delete", deleteURL)
+	client, err := m.newClient("delete", deleteURL, AuthToken)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
 	if client == nil {
 		return nil, fmt.Errorf("client is nil")
 	}
 	res := new(PolicyDeleteResponse)
 
-	err := client.ToJSON(res)
+	err = client.ToJSON(res)
 	if err != nil {
 		return nil, fmt.Errorf("request delete policy api failed,error: %s ", err)
 	}
@@ -134,16 +173,16 @@ func (m *Manager) SetSecret(name, encodeJsonData string) (*SecretSetResponse, er
 	if name == "" || encodeJsonData == "" {
 		return nil, fmt.Errorf("secret name or jsonData is null")
 	}
-	client := m.newClient("post", SecretUrl)
-	if client == nil {
-		return nil, fmt.Errorf("client is nil")
+	client, err := m.newClient("post", SecretUrl, AuthToken)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
 	}
 	req := SetSecretReq{
 		Name:   name,
 		Secret: encodeJsonData,
 	}
 
-	client, err := client.JSONBody(req)
+	client, err = client.JSONBody(req)
 	if err != nil {
 		return nil, err
 	}
@@ -160,15 +199,15 @@ func (m *Manager) UpdateSecret(id, encodeJsonData string) (*SecretSetResponse, e
 	if id == "" || encodeJsonData == "" {
 		return nil, fmt.Errorf("secret id or jsonData is null")
 	}
-	client := m.newClient("put", SecretUrl)
-	if client == nil {
-		return nil, fmt.Errorf("client is nil")
+	client, err := m.newClient("put", SecretUrl, AuthToken)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
 	}
 	req := UpdateSecretReq{
 		Id:     id,
 		Secret: encodeJsonData,
 	}
-	client, err := client.JSONBody(req)
+	client, err = client.JSONBody(req)
 	if err != nil {
 		return nil, err
 	}
@@ -182,9 +221,12 @@ func (m *Manager) UpdateSecret(id, encodeJsonData string) (*SecretSetResponse, e
 	return res, nil
 }
 func (m *Manager) ListSecret() (*SecretListResponse, error) {
-	client := m.newClient("get", SecretListUrl)
+	client, err := m.newClient("get", SecretListUrl, AuthToken)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
 	res := new(SecretListResponse)
-	err := client.ToJSON(res)
+	err = client.ToJSON(res)
 	if err != nil {
 		return nil, fmt.Errorf("request secret list failed, error: %s ", err)
 	}
@@ -193,13 +235,16 @@ func (m *Manager) ListSecret() (*SecretListResponse, error) {
 
 func (m *Manager) DeleteSecret(secretID string) (*SecretDeleteResponse, error) {
 	deleteSecretURL := SecretUrl + "/" + secretID
-	client := m.newClient("delete", deleteSecretURL)
+	client, err := m.newClient("delete", deleteSecretURL, AuthToken)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
 	if client == nil {
 		return nil, fmt.Errorf("client is nil")
 	}
 	res := new(SecretDeleteResponse)
 
-	err := client.ToJSON(res)
+	err = client.ToJSON(res)
 	if err != nil {
 		return nil, fmt.Errorf("request delete secret api failed,error: %s ", err)
 	}
@@ -208,12 +253,12 @@ func (m *Manager) DeleteSecret(secretID string) (*SecretDeleteResponse, error) {
 }
 
 func (m *Manager) GetRootCert() (*CaResponse, error) {
-	client := m.newClient("get", CaUrl)
-	if client == nil {
-		return nil, fmt.Errorf("client is nil")
+	client, err := m.newClient("get", CaUrl, AuthNone)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
 	}
 	res := new(CaResponse)
-	err := client.ToJSON(res)
+	err = client.ToJSON(res)
 	if err != nil {
 		return nil, fmt.Errorf("request ca cert failed, error: %s", err)
 	}
@@ -222,9 +267,12 @@ func (m *Manager) GetRootCert() (*CaResponse, error) {
 }
 
 func (m *Manager) GetNonce() (*NonceResponse, error) {
-	client := m.newClient("get", NonceUrl)
+	client, err := m.newClient("get", NonceUrl, AuthAPIKey)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
 	res := new(NonceResponse)
-	err := client.ToJSON(res)
+	err = client.ToJSON(res)
 	if err != nil {
 		return nil, fmt.Errorf("request get nonce failed, error: %s", err)
 	}
@@ -303,7 +351,10 @@ func (m *Manager) AttestForToken(tee, runtimedata, devices, policies string) (*T
 		return nil, fmt.Errorf("get node attestInfo failed, error: %s", err)
 	}
 
-	client := m.newClient("post", AttestUrl)
+	client, err := m.newClient("post", AttestUrl, AuthAPIKey)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
 	client, err = client.JSONBody(attestReq)
 	if err != nil {
 		return nil, fmt.Errorf("set request body failed, error: %s", err)
@@ -328,7 +379,10 @@ func (m *Manager) AttestForCert(tee, eccpemBase64key, devices, policies string, 
 		return nil, fmt.Errorf("get node cert attestInfo failed, error: %s", err)
 	}
 
-	client := m.newClient("post", AttestCertUrl)
+	client, err := m.newClient("post", AttestCertUrl, AuthAPIKey)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
 	req := AttestCertInfoReq{
 		Csr:        csr,
 		AttestInfo: attestReq,
@@ -359,7 +413,10 @@ func (m *Manager) AttestForSecret(tee, runtimedata, devices, policies, secretID 
 	if err != nil {
 		return nil, fmt.Errorf("get node cert attestInfo failed, error: %s", err)
 	}
-	client := m.newClient("post", AttestSecretUrl)
+	client, err := m.newClient("post", AttestSecretUrl, AuthAPIKey)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
 	client.Header("SecretId", secretID)
 	client, err = client.JSONBody(attestReq)
 	if err != nil {
@@ -376,6 +433,54 @@ func (m *Manager) AttestForSecret(tee, runtimedata, devices, policies, secretID 
 	}
 
 	return secretRes, nil
+}
+
+func (m *Manager) Login(username, password string) (*TCASInfo, error) {
+	client, err := m.newClient("post", LoginUrl, AuthNone)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
+	req := struct {
+		Name   string `json:"userName"`
+		Passwd string `json:"passWord"`
+	}{
+		Name:   base64.StdEncoding.EncodeToString([]byte(username)),
+		Passwd: base64.StdEncoding.EncodeToString([]byte(password)),
+	}
+
+	client, err = client.JSONBody(req)
+	if err != nil {
+		return nil, fmt.Errorf("set request body failed, error: %s", err)
+	}
+
+	loginRes := new(LoginRes)
+	err = client.ToJSON(loginRes)
+	if err != nil {
+		return nil, fmt.Errorf("do request to login api failed, error: %s", err)
+	}
+
+	if loginRes.Code != 200 {
+		return nil, fmt.Errorf("%s", loginRes.Message)
+	}
+
+	m.TCASInfo.Token = loginRes.Token
+	client, err = m.newClient("get", UserInfo, AuthToken)
+	if err != nil {
+		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
+	}
+	userRes := new(UserRes)
+	err = client.ToJSON(userRes)
+	if err != nil {
+		return nil, fmt.Errorf("do request to user info api failed, error: %s", err)
+	}
+
+	if userRes.Code != 200 {
+		return nil, fmt.Errorf("get user info failed, error: %s", err)
+	}
+
+	m.TCASInfo.Role = userRes.User.Roles
+	m.TCASInfo.APIKey = userRes.User.ApiKey
+	return m.TCASInfo, nil
 }
 
 func X5cToCertPem(x5c []string) (*bytes.Buffer, error) {

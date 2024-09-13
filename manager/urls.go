@@ -19,4 +19,6 @@ const (
 	CaUrl             = "/v1/pki/ca"
 	AttestCertUrl     = "/v1/attest/getcert"
 	AttestSecretUrl   = "/v1/attest/getsecret"
+	LoginUrl          = "/v1/user/login"
+	UserInfo          = "/v1/user/info"
 )
