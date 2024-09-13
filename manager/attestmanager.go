@@ -104,10 +104,14 @@ func (m *Manager) newClient(method string, url string, authType string) (*httpli
 }
 
 func (m *Manager) SetPolicy(name, policy, attestationType string) (*PolicySetResponse, error) {
-
 	if name == "" || policy == "" {
 		return nil, fmt.Errorf("name or policy is null")
 	}
+
+	if attestationType != "trust_node" && attestationType != "trust_cluster" {
+		return nil, fmt.Errorf("attestation Type only support trus_tnode or trust_cluster")
+	}
+
 	client, err := m.newClient("post", PolicyUrl, AuthToken)
 	if err != nil {
 		return nil, fmt.Errorf("create tcas client failed, error: %s", err)
