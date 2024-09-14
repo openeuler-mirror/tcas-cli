@@ -12,6 +12,8 @@ import (
 	"fmt"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/attest"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/ca"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/initconfig"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/login"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/policy"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/secret"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/verify"
@@ -53,6 +55,8 @@ func Execute() {
 	RootCmd.AddCommand(secret.Cmd)
 	RootCmd.AddCommand(ca.Cmd)
 	RootCmd.AddCommand(verify.Cmd)
+	RootCmd.AddCommand(initconfig.Cmd)
+	RootCmd.AddCommand(login.Cmd)
 	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

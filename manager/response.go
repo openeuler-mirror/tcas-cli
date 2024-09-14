@@ -113,3 +113,31 @@ type AttestSecretData struct {
 	HttpBaseResponse
 	Secret interface{} `json:"secret"`
 }
+
+type LoginRes struct {
+	HttpBaseResponse
+	Token  string
+	UserId string
+}
+
+type User struct {
+	No         int        `orm:"auto"`
+	Id         string     `orm:"unique;size(255)" json:"userId,omitempty"`
+	Display    string     `orm:"size(255)" json:"Display,omitempty"`
+	Name       string     `orm:"unique;size(200)" json:"userName,omitempty"`
+	Department string     `orm:"size(255)" json:"department,omitempty"`
+	Email      string     `orm:"size(200)" json:"email,omitempty"`
+	Status     string     `orm:"size(200)" json:"status,omitempty"`
+	Comment    string     `orm:"type(text)" json:"comment,omitempty"`
+	Roles      string     `orm:"size(32)" json:"roles,omitempty"`
+	ApiKey     string     `orm:"size(255);unique" json:"apiKey"`
+	LastLogin  *time.Time `orm:"auto_now_add;type(datetime)" json:"lastLogin,omitempty"`
+	LastIp     string     `orm:"size(200)" json:"lastIp,omitempty"`
+	CreateTime *time.Time `orm:"auto_now_add;type(datetime)" json:"createTime,omitempty"`
+	UpdateTime *time.Time `orm:"auto_now;type(datetime)" json:"updateTime,omitempty"`
+}
+
+type UserRes struct {
+	HttpBaseResponse
+	User *User `json:"User"`
+}

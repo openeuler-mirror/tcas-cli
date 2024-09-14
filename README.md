@@ -1,5 +1,60 @@
 # TCAS Client
 
+## 0. Authentication
+### 0.1 LoginToken
+LoginToken is needed when you want manager policy or secret,
+so your should login with the username and password first
+
+```shell
+./tcasctl login -u <url> 
+```
++ `-u`: optional, tcas's api url, default is https://api.trustcluster.cc
+
+Follow the prompts to enter your username and password to complete the login process.
+
+when login successful, the tcas's config will generate automatic in `<homedir>/.tcasctl/config.json`
+
+```json
+{
+ "configs": {
+  "https://api.trustcluster.cc": {
+   "APIEndpoint": "https://api.trustcluster.cc",
+   "Role": "",
+   "Token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjYxMzQ4MjIsImlhdCI6MTcyNjEzMzkyMiwiaXNzIjoidGNhcyIsImp0aSI6ImYwNWI4MzI2LWRhYmEtNGVkZi04YzcwLTEzNWQ5MTRjMWRmNiIsIm5iZiI6MTcyNjEzMjkyMiwidXNlcklkIjoidXNlci05MWU1MmYwYi0zMzgxLTQzZTQtOGFiNi0yZmVjMzdhZTQ3OTYifQ.CvZ4De0l-So9rDRyn2O6TLORQB3gvePh31UpO7vr5CXXmFUdTAUB4C7qxSpLaSwKHRO019v9h_e-buXq-5RxtbIyDNVLKcxK38umSLdpwF5s-vM8Bp-brRf4kFyNPcR7OoHgSaolTcrQxY8aw-CYZj_-DD6KYmPzNMWLiR5VLS8",
+   "API-KEY": "",
+   "CaPath": "",
+   "SkipVerify": false
+  }
+ }
+}
+```
+
+### 0.2 API-KEY
+API-KEY is needed, when you want to do attest, and API-KEY can only be obtained when the policy user login,
+so you need ask the policy user to get the API-KEY, and config the key as fellow
+
+```shell
+./tcasctl init -u <url>
+```
++ `-u`: optional, tcas's api url, default is https://api.trustcluster.cc
+
+it will generate a template config in `<homedir>/.tcasctl/config.json`, you need to add the API-KEY to config:
+
+```shell
+{
+ "configs": {
+  "https://api.trustcluster.cc": {
+   "APIEndpoint": "https://api.trustcluster.cc",
+   "Role": "",
+   "Token": "",
+   "API-KEY": "kIjoidXNlci05MWU1MmYwYi0zM",
+   "CaPath": "",
+   "SkipVerify": false
+  }
+ }
+}
+```
+
 ## 1. policy manager
 ### 1.1 set policy 
 ```shell
