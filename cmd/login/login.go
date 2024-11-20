@@ -24,6 +24,7 @@ var Cmd = &cobra.Command{
 		url, _ := cmd.Flags().GetString("url")
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
+		skipssl, _ := cmd.Flags().GetBool("skipssl")
 
 		if username == "" {
 			fmt.Print("Username: ")
@@ -49,6 +50,7 @@ var Cmd = &cobra.Command{
 			tcasConfig = new(manager.TCASInfo)
 			tcasConfig.APIEndpoint = url
 		}
+		tcasConfig.SkipVerify = skipssl
 		m, err := manager.New(tcasConfig, tees.GetCollectors())
 		if err != nil {
 			logrus.Errorf("create attest manager failed, error: %s", err)
@@ -98,4 +100,5 @@ func init() {
 	Cmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
 	Cmd.Flags().StringP("username", "n", "", "optional, tcas's username")
 	Cmd.Flags().StringP("password", "p", "", "optional, tcas's password")
+	Cmd.Flags().BoolP("skipssl", "s", false, "optional, skip ssl verify")
 }

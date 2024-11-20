@@ -28,6 +28,7 @@ var Cmd = &cobra.Command{
 	DisableSuggestions:         false,
 	Run: func(cmd *cobra.Command, args []string) {
 		url, _ := cmd.Flags().GetString("url")
+		skipssl, _ := cmd.Flags().GetBool("skipssl")
 
 		homedir, err := os.UserHomeDir()
 		if err != nil {
@@ -62,6 +63,7 @@ var Cmd = &cobra.Command{
 		}
 
 		if configs != nil {
+			configs.TCASInfos[url].SkipVerify = skipssl
 			err = WriteTCASConfigToFile(configs, configPath)
 			if err != nil {
 				logrus.Errorf("write config faield, error: %s", err)
@@ -121,4 +123,5 @@ func ReadTCASInfoFromConfig(url string) (*manager.TCASInfo, error) {
 
 func init() {
 	Cmd.Flags().StringP("url", "u", "https://api.trustcluster.cc", "optional, tcas's api url")
+	Cmd.Flags().BoolP("skipssl", "s", false, "optional, skip ssl verify")
 }
