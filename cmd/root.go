@@ -17,6 +17,7 @@ import (
 	"gitee.com/nanhu-lab/tcas-cli/cmd/policy"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/secret"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/verify"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/version"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -57,6 +58,7 @@ func Execute() {
 	RootCmd.AddCommand(verify.Cmd)
 	RootCmd.AddCommand(initconfig.Cmd)
 	RootCmd.AddCommand(login.Cmd)
+	RootCmd.AddCommand(version.Cmd)
 	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
