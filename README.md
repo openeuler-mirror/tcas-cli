@@ -202,7 +202,7 @@ delete secret successful, secret id: <secret_id>
 ```shell
 ./tcasctl attest token -u <url>  -t <tee> -d <base64 encoded userdata> -p <policy ids> -v <trust-devices>
 ```
-+ `-t`: must, the type of tee, now support csv or virtcca
++ `-t`: must, the type of tee, now support csv and virtcca
 + `-d`: optional, the base64 encoded userdata
 + `-p`: optional, the ids of the policy needed matching
 + `-v`: optional, the trust devices
@@ -218,7 +218,7 @@ successful response:
 ```shell
 ./tcasctl attest secret -u <url>  -t <tee> -d <base64 encoded userdata> -p <policy ids> -v <trust-devices> -s <secretid> -o <output dir> 
 ```
-+ `-t`: must, the type of tee, now support csv or virtcca
++ `-t`: must, the type of tee, now support csv and virtcca
 + `-s`: must,the secret ID that needs to be obtained
 + `-d`: optional, the base64 encoded userdata
 + `-p`: optional, the ids of the policy needed matching 
@@ -234,7 +234,7 @@ successful response:
 ```shell 
 ./tcasctl attest cert -u <url> -t <tee> -p <policy ids> -v <trust-devices> -k <publickey file> -c <common_name> -e <expiration> -i <ipaddresses> -o <output dir> 
 ```
-+ `-t`: must, the type of tee, now support csv or virtcca
++ `-t`: must, the type of tee, now support csv and virtcca
 + `-p`: optional, the ids of the policy needed matching
 + `-v`: optional, the trust devices
 + `-k`: optional, the ecc256 of publickey in pem format, if not present, will generate key pair randomly 
