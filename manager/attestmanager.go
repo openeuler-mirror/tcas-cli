@@ -1,9 +1,9 @@
 /*
 * @Author: jffan
 * @Date: 2024-07-31 15:01:17
- * @LastEditTime: 2024-08-21 15:21:00
+ * @LastEditTime: 2025-11-04 14:40:36
  * @LastEditors: jffan
- * @FilePath: \gitee-tcas\manager\attestmanager.go
+ * @FilePath: \tcas-cli\manager\attestmanager.go
 * @Description: Request encapsulation
 */
 package manager
@@ -17,11 +17,12 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
-	"gitee.com/nanhu-lab/tcas-cli/collectors"
-	consts "gitee.com/nanhu-lab/tcas-cli/constants"
 	"os"
 	"strings"
 	"time"
+
+	"gitee.com/nanhu-lab/tcas-cli/collectors"
+	consts "gitee.com/nanhu-lab/tcas-cli/constants"
 
 	"github.com/beego/beego/v2/client/httplib"
 	"github.com/dgrijalva/jwt-go"
