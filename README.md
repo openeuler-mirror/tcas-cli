@@ -257,7 +257,7 @@ get cert successful, the <publickey.pem> <privatekey.pem> <serial_number_common_
 
 ### 4.2 verify token
 ```shell
-./tcasclt verify token -t <token> -f <the path of the cert>
+./tcasctl verify token -t <token> -f <the path of the cert>
 ```
 - `-t`:must,tcas's token
 - `-f`:optionally, the path of the CA certificate. If not, it will be verified online
@@ -282,5 +282,36 @@ successful response:
 <the path of the cert> verify successful 
 ```
 
+## 5.evidence
+
+```shell
+./tcasctl evidence -t tdx -r eyJ1c2VyIjoiamZmYW4ifQ==
+```
++ `-t`: must, the type of tee, now support csv、virtcca and tdx
++ `-r`: optional, the base64 encoded repotdata
++ `-o`: optional, the save path of the tees report，By default, it is saved in the current '**tee-reports**' directory.
++ `-v`: optional, the trust devices
+
+successful response:
+
+```shell
+------------------evidence info start------------------
+{
+  "tee": "tdx",
+  "tee_report": "<base64 evidence content>",
+  "parameter": null,
+  "trust_devices": [],
+  "runtime_data": "eyJ1c2VyIjoiamZmYW4ifQ==",
+  "init_data": "",
+  "event_log": ""
+}
+------------------evidence info end--------------------
+The evidence successfully saved in: tee-reports/tdx-evidence.json
+```
+
+
+
+
 ## reference
+
 + https://github.com/edgelesssys/go-tdx-qpl/blob/main/tdx/tdx_linux.go

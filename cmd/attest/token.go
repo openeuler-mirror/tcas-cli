@@ -1,7 +1,16 @@
+/*
+ * @Author: jffan
+ * @Date: 2025-11-06 09:32:04
+ * @LastEditTime: 2025-11-06 16:57:38
+ * @LastEditors: jffan
+ * @FilePath: \tcas-cli\cmd\attest\token.go
+ * @Description:
+ */
 package attest
 
 import (
 	"fmt"
+
 	"gitee.com/nanhu-lab/tcas-cli/cmd/initconfig"
 	"gitee.com/nanhu-lab/tcas-cli/manager"
 	"gitee.com/nanhu-lab/tcas-cli/tees"
@@ -28,6 +37,7 @@ var tokenCmd = &cobra.Command{
 		}
 		m, err := manager.New(tcasConfig, tees.GetCollectors())
 		if err != nil {
+			logrus.Errorf("create token manager failed, error: %s", err)
 			return
 		}
 		res, err := m.AttestForToken(tee, userdata, devices, policies)
