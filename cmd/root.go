@@ -1,24 +1,26 @@
 /*
  * @Author: jffan
  * @Date: 2024-07-31 15:01:17
- * @LastEditTime: 2024-08-05 09:44:23
+ * @LastEditTime: 2025-11-06 10:04:43
  * @LastEditors: jffan
- * @FilePath: \gitee-tcas\cmd\root.go
+ * @FilePath: \tcas-cli\cmd\root.go
  * @Description:
  */
 package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"gitee.com/nanhu-lab/tcas-cli/cmd/attest"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/ca"
+	"gitee.com/nanhu-lab/tcas-cli/cmd/evidence"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/initconfig"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/login"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/policy"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/secret"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/verify"
 	"gitee.com/nanhu-lab/tcas-cli/cmd/version"
-	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -59,6 +61,7 @@ func Execute() {
 	RootCmd.AddCommand(initconfig.Cmd)
 	RootCmd.AddCommand(login.Cmd)
 	RootCmd.AddCommand(version.Cmd)
+	RootCmd.AddCommand(evidence.Cmd)
 	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
