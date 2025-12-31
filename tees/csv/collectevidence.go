@@ -12,8 +12,8 @@ type Collector struct {
 func NewCollector() *Collector {
 	return &Collector{}
 }
-func (c *Collector) CollectEvidence(userdata []byte) (*collectors.Evidence, error) {
-	report, err := GetReportInByte(userdata)
+func (c *Collector) CollectEvidence(reportData []byte) (*collectors.Evidence, error) {
+	report, err := GetReportInByte(reportData)
 	if err != nil {
 		return nil, fmt.Errorf("get attestation report failed, error: %s", err)
 	}

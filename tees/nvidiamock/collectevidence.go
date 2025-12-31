@@ -14,7 +14,7 @@ func NewCollector() *Collector {
 	return &Collector{}
 }
 
-func (c *Collector) CollectEvidence(userdata []byte) (*collectors.Evidence, error) {
+func (c *Collector) CollectEvidence(reportData []byte) (*collectors.Evidence, error) {
 
 	report, err := os.ReadFile("nvidia-report.json")
 	if err != nil {

@@ -8,6 +8,8 @@
  */
 package manager
 
+import "gitee.com/nanhu-lab/tcas-cli/teetool"
+
 type SetPolicyReq struct {
 	Name            string `json:"policy_name"`
 	Policy          string `json:"policy_rego"`
@@ -24,26 +26,10 @@ type UpdateSecretReq struct {
 	Secret string `json:"secret"`
 }
 
-type TrustDeviceReport struct {
-	DeviceType   string      `json:"type"`
-	DeviceReport string      `json:"device_report"`
-	Parameter    interface{} `json:"parameter"`
-}
-
-type NodeEvidence struct {
-	Tee         string               `json:"tee"`
-	TeeReport   string               `json:"tee_report"`
-	Parameter   interface{}          `json:"parameter"`
-	TrustDevice []*TrustDeviceReport `json:"trust_devices"`
-	RuntimeData string               `json:"runtime_data"`
-	InitData    string               `json:"init_data"`
-	EventLog    string               `json:"event_log"`
-}
-
 type NodeAttestInfoReq struct {
-	Report    *NodeEvidence `json:"report"`
-	Nonce     string        `json:"nonce"`
-	PolicyIds []string      `json:"policy_ids"`
+	Report    teetool.NodeEvidence `json:"report"`
+	Nonce     string               `json:"nonce"`
+	PolicyIds []string             `json:"policy_ids"`
 }
 
 type CertCsrInfoReq struct {
