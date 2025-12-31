@@ -14,8 +14,8 @@ func NewCollector() *Collector {
 	return &Collector{}
 }
 
-func (c *Collector) CollectEvidence(userdata []byte) (*collectors.Evidence, error) {
-	token, err := GetAttestationToken(userdata)
+func (c *Collector) CollectEvidence(reportData []byte) (*collectors.Evidence, error) {
+	token, err := GetAttestationToken(reportData)
 	if err != nil {
 		return nil, fmt.Errorf("get vcca token failed, error: %s", err)
 	}

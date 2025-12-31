@@ -7,6 +7,6 @@ type Evidence struct {
 }
 
 type EvidenceCollector interface {
-	CollectEvidence(userdata []byte) (*Evidence, error)
+	CollectEvidence(reportData []byte) (*Evidence, error)
 	Name() string
 }

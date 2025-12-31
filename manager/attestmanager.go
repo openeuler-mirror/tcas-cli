@@ -10,13 +10,13 @@ package manager
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"gitee.com/nanhu-lab/tcas-cli/teetool"
 	"os"
 	"strings"
 	"time"
@@ -286,7 +286,7 @@ func (m *Manager) GetNonce() (*NonceResponse, error) {
 
 }
 
-func (m *Manager) getNodeAttestInfo(tee, runtimedata, devices, policies string) (*NodeAttestInfoReq, error) {
+func (m *Manager) GetNodeAttestInfo(tee, userData, devices, policies string) (*NodeAttestInfoReq, error) {
 	if tee == "" {
 		return nil, fmt.Errorf("tee is null")
 	}
@@ -300,37 +300,9 @@ func (m *Manager) getNodeAttestInfo(tee, runtimedata, devices, policies string) 
 	}
 
 	logrus.Debugf("nonce is %s", nonceRes.Data.Nonce)
-	userdata := fmt.Sprintf("%x", sha256.Sum256([]byte(nonceRes.Data.Nonce+runtimedata)))
-
-	c, ok := m.Collectors[tee]
-	if !ok {
-		return nil, fmt.Errorf("tee: %s not support yet", tee)
-	}
-	teeReport, err := c.CollectEvidence([]byte(userdata))
+	nodeEvidence, err := teetool.GetNodeEvidenceWithUserData(tee, devices, userData, nonceRes.Data.Nonce)
 	if err != nil {
-		return nil, fmt.Errorf("collect evidence from %s failed, error: %s", c.Name(), err)
-	}
-
-	var devicelist []string
-	if devices != "" {
-		devicelist = strings.Split(devices, ",")
-	}
-	deviceReports := make([]*TrustDeviceReport, 0)
-	for _, d := range devicelist {
-		c, ok := m.Collectors[d]
-		if !ok {
-			return nil, fmt.Errorf("device tee: %s not support yet", tee)
-		}
-		deviceEvidence, err := c.CollectEvidence([]byte(userdata))
-		if err != nil {
-			return nil, fmt.Errorf("collect evidence from %s failed, error: %s", c.Name(), err)
-		}
-
-		deviceReports = append(deviceReports, &TrustDeviceReport{
-			DeviceType:   d,
-			DeviceReport: deviceEvidence.TeeReport,
-			Parameter:    deviceEvidence.Parameter,
-		})
+		logrus.Errorf("get node evidence failed, error: %s", err)
 	}
 
 	var policyIds []string
@@ -338,20 +310,14 @@ func (m *Manager) getNodeAttestInfo(tee, runtimedata, devices, policies string) 
 		policyIds = strings.Split(policies, ",")
 	}
 	return &NodeAttestInfoReq{
-		Report: &NodeEvidence{
-			Tee:         teeReport.TeeType,
-			TeeReport:   teeReport.TeeReport,
-			Parameter:   teeReport.Parameter,
-			RuntimeData: runtimedata,
-			TrustDevice: deviceReports,
-		},
+		Report:    *nodeEvidence,
 		Nonce:     nonceRes.Data.Nonce,
 		PolicyIds: policyIds,
 	}, nil
 }
 
-func (m *Manager) AttestForToken(tee, runtimedata, devices, policies string) (*TokenResponse, error) {
-	attestReq, err := m.getNodeAttestInfo(tee, runtimedata, devices, policies)
+func (m *Manager) AttestForToken(tee, userData, devices, policies string) (*TokenResponse, error) {
+	attestReq, err := m.GetNodeAttestInfo(tee, userData, devices, policies)
 	if err != nil {
 		return nil, fmt.Errorf("get node attestInfo failed, error: %s", err)
 	}
@@ -379,7 +345,7 @@ func (m *Manager) AttestForToken(tee, runtimedata, devices, policies string) (*T
 }
 
 func (m *Manager) AttestForCert(tee, eccpemBase64key, devices, policies string, csr *CertCsrInfoReq) (*AttestCertResponse, error) {
-	attestReq, err := m.getNodeAttestInfo(tee, eccpemBase64key, devices, policies)
+	attestReq, err := m.GetNodeAttestInfo(tee, eccpemBase64key, devices, policies)
 	if err != nil {
 		return nil, fmt.Errorf("get node cert attestInfo failed, error: %s", err)
 	}
@@ -410,11 +376,11 @@ func (m *Manager) AttestForCert(tee, eccpemBase64key, devices, policies string, 
 	return certRes, nil
 }
 
-func (m *Manager) AttestForSecret(tee, runtimedata, devices, policies, secretID string) (*AttestSecretData, error) {
+func (m *Manager) AttestForSecret(tee, userdata, devices, policies, secretID string) (*AttestSecretData, error) {
 	if secretID == "" {
 		return nil, fmt.Errorf("secret id is null")
 	}
-	attestReq, err := m.getNodeAttestInfo(tee, runtimedata, devices, policies)
+	attestReq, err := m.GetNodeAttestInfo(tee, userdata, devices, policies)
 	if err != nil {
 		return nil, fmt.Errorf("get node cert attestInfo failed, error: %s", err)
 	}

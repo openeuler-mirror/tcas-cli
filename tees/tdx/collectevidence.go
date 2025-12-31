@@ -24,14 +24,14 @@ type Collector struct {
 func NewCollector() *Collector {
 	return &Collector{}
 }
-func (c *Collector) CollectEvidence(userdata []byte) (*collectors.Evidence, error) {
-	if len(userdata) > TDX_REPORT_DATA_SIZE {
-		return nil, fmt.Errorf("userdata size exceeds TDX report data size")
+func (c *Collector) CollectEvidence(reportData []byte) (*collectors.Evidence, error) {
+	if len(reportData) > TDX_REPORT_DATA_SIZE {
+		return nil, fmt.Errorf("reportData size exceeds TDX report data size")
 	}
-	var reportData TDXReportData
-	copy(reportData.Data[:], userdata)
-	logrus.Debugf("reportData.Data: %x\n", reportData.Data)
-	report, err := getTDXQuote(&reportData)
+	var tdxReportData TDXReportData
+	copy(tdxReportData.Data[:], reportData)
+	logrus.Debugf("tdxReportData.Data: %x\n", tdxReportData.Data)
+	report, err := getTDXQuote(&tdxReportData)
 	if err != nil {
 		return nil, fmt.Errorf("get attestation report failed, error: %s", err)
 	}
